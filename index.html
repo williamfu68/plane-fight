@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>飞机大战</title>
+    <link rel="stylesheet" href="css/index.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+        
+        li {
+            list-style: none;
+        }
+        
+        .main {
+            position: relative;
+            width: 320px;
+            height: 568px;
+            margin: 80px auto 0;
+            overflow: hidden;
+            transition: all .2s ease;
+            /* border-radius: 6px; */
+            user-select: none;
+            transition: all .3s ease;
+            background: url(images/background_0.png) no-repeat;
+        }
+        
+        .start-btn {
+            position: absolute;
+            top: 55%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100px;
+            height: 40px;
+            background: #8f9293;
+            color: #c3c8c9;
+            font-weight: 600;
+            border: none;
+            outline: none;
+            border-radius: 6px;
+            letter-spacing: 2px;
+            transition: all .3s ease;
+            box-shadow: 0 0 4px #8f9293;
+        }
+        
+        .start-btn:hover {
+            cursor: pointer;
+            color: #dbdedf;
+            box-shadow: 0 5px 10px rgba(143, 146, 147);
+        }
+        
+        .fight-info {
+            display: flex;
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 30px;
+            width: 320px;
+            justify-content: space-around;
+            align-items: center;
+            border-bottom: 2px solid #b4b8b9;
+            z-index: 2;
+            visibility: hidden;
+        }
+        
+        .pause {
+            width: 32px;
+            height: 100%;
+            background: url(images/pause.png) no-repeat center / cover;
+        }
+        
+        .pause:hover {
+            cursor: pointer;
+        }
+        
+        .blood {
+            border-radius: 24px;
+            overflow: hidden;
+        }
+        
+        .blood-item {
+            float: left;
+            width: 50px;
+            height: 16px;
+            text-align: center;
+            border-right: 1px solid #b4b8b9;
+            background-color: #707070;
+            transition: all .3s ease;
+        }
+        
+        .blood-item:last-child {
+            border: 0;
+        }
+        
+        .score {
+            color: #707070;
+            font-weight: 600;
+        }
+        
+        .score-number {
+            color: #707070;
+            transition: all .3s;
+        }
+        
+        .shade {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 320px;
+            height: 568px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #dbdedf;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-indent: 15px;
+            background-color: rgba(0, 0, 0, .5);
+            z-index: -1;
+            visibility: hidden;
+        }
+        
+        .shade-inner,
+        .gameover-title {
+            width: 320px;
+        }
+        
+        .shade-title,
+        .gameover-title {
+            height: 60px;
+            text-align: center;
+        }
+        
+        .shade-btn-box,
+        .gameover-box {
+            display: flex;
+            justify-content: space-around;
+        }
+        
+        .shade-btn,
+        .gameover-btn {
+            width: 100px;
+            height: 40px;
+            outline: none;
+            border: none;
+            border-radius: 6px;
+            background-color: #c3c8c9;
+            color: #666;
+            font-weight: 600;
+        }
+        
+        .abandon:hover {
+            transition: all .3s ease;
+            background-color: #02c1fa;
+            color: #fff;
+            cursor: pointer;
+        }
+        
+        .continue:hover {
+            background-color: #fecb01;
+            color: #fff;
+            transition: all .3s ease;
+            cursor: pointer;
+        }
+        
+        .gameover-page {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 320px;
+            height: 568px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #dbdedf;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-indent: 15px;
+            background-color: rgba(0, 0, 0, .5);
+            z-index: -2;
+        }
+        
+        .gameover-btn:hover {
+            background-color: #fecb01;
+            color: #fff;
+            transition: all .3s ease;
+            cursor: pointer;
+        }
+        
+        .score-record {
+            position: absolute;
+            right: 5px;
+            top: 32px;
+            text-align: right;
+            visibility: hidden;
+        }
+        
+        .score-text {
+            z-index: 2;
+            color: #707070;
+            font-weight: 600;
+            border: 0;
+        }
+        
+        .score-text:hover {
+            cursor: pointer;
+        }
+        
+        .score-wrap {
+            transform-origin: 50% 0;
+            transform: scaleY(0);
+            transition: all .3s ease;
+        }
+        
+        .score-item {
+            border: 2px solid #b4b8b9;
+            border-top: 0;
+            padding: 0 5px;
+            color: #666;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="main" id="main">
+        <div class="fight-info">
+            <div class="pause"></div>
+            <div class="blood">
+                <div class="blood-item item1"></div>
+                <div class="blood-item item2"></div>
+                <div class="blood-item item3"></div>
+            </div>
+            <div class="score">
+                <span class="score-title">得分</span>
+                <span class="score-number">0</span>
+            </div>
+        </div>
+        <button type="button" id="start-btn" class="start-btn">START</button>
+        <!-- 暂停页面 -->
+        <div class="shade">
+            <div class="shade-inner">
+                <div class="shade-title">
+                    <h2>已暂停</h2>
+                </div>
+                <div class="shade-btn-box">
+                    <button class="shade-btn abandon">重新开始</button>
+                    <button class="shade-btn continue">继续游戏</button>
+                </div>
+            </div>
+        </div>
+        <!-- 游戏结束页面 -->
+        <div class="gameover-page">
+            <div class="gameover-inner">
+                <div class="gameover-title">
+
+                </div>
+                <div class="gameover-box">
+                    <button class="gameover-btn again">再来一局</button>
+                </div>
+            </div>
+        </div>
+        <!-- 积分记录 -->
+        <div class="score-record">
+            <div class="score-text">
+                积分记录
+            </div>
+            <ul class="score-wrap"></ul>
+        </div>
+    </div>
+    <script src="js/index.js"></script>
+</body>
+
+</html>
